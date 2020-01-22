@@ -3,12 +3,12 @@ BASH="$whereis bash"
 clear
 read -p "please Enter the hour" Hour
 read -p "please Enter the Minute" Minute
-read -p "input The URL of The File you want to download It : " URL
+read -p "input The URL or URLS(in a file) of The File you want to download It : " URL
 date_hour=`date +%H`
 date_minute=`date +%M`
 sigma_date=$((date_hour * 60 + date_minute))
 sigma_date_input=$((Hour * 60 + Minute))
-while [ "$sigma_date" != "$sigma_date_input" ]
+while [ "$sigma_date" >= "$sigma_date_input" ]
     do
         echo "Sleeping"
         sleep 5
@@ -18,11 +18,24 @@ while [ "$sigma_date" != "$sigma_date_input" ]
         sigma_date=$((date_hour * 60 + date_minute))
 done
 
-wget URL
-if [ "$?" == "0" ]
+if [[ $URL =~ "http" ]]
     then
-        notify-send  "Your file has been downloaded Successfully :)"
-    else 
-	notify-send "oops! This url not exist 😐️"
+        wget $URL
+        if [ "$?" == "0" ]
+            then
+                notify-send  "Your file has been downloaded Successfully :)"
+            else 
+	            notify-send "oops! This url not exist 😐️"
+        fi
+    else
+        wget -i $URL
+        if [ "$?" == "0" ]
+            then
+                notify-send  "Your file has been downloaded Successfully :)"
+            else 
+                notify-send "oops! This url not exist 😐️"
+        fi  	
 fi
+
+
 
